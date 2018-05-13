@@ -55,6 +55,10 @@ if $IPSET list whitelist >/dev/null 2>&1; then
 	$IPSET save whitelist -f /etc/dtables/data/whitelist.save
 	$IPSET destroy whitelist
 fi
+if $IPSET list proxylist >/dev/null 2>&1; then
+	$IPSET save proxylist -f /etc/dtables/data/proxylist.save
+	$IPSET destroy proxylist
+fi
 if $IPSET list blacklist >/dev/null 2>&1; then
 	$IPSET save blacklist -f /etc/dtables/data/blacklist.save
 	$IPSET destroy blacklist

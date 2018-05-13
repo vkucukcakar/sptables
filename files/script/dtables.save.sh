@@ -29,43 +29,30 @@
 
 ###
 # This file is a part of dtables - Docker compatible Iptables firewall
-# Filename		: dtables.start.sh
-# Description	: DCIF service start file
+# Filename		: dtables.save.sh
+# Description	: Manually save current sets without restarting service
 ###
 
 
-### Reload sysctl ###
-
-
-# sysctl command
-SYSCTL="sysctl"
-
-# Make sysctl read all configuration files again
-$SYSCTL --quiet --system
-
-
-### Start IPset ###
+### Save IPset ###
 
 
 # ipset command
 IPSET="ipset"
 
-# Restore default configuration
-$IPSET restore -! -f /etc/dtables/conf/ipset.conf
-
-# Restore the saved sets (-! parameter will prevent ipset failing on multiple create statements)
-[ -e /etc/dtables/data/whitelist.save ] && $IPSET restore -! -f /etc/dtables/data/whitelist.save
-[ -e /etc/dtables/data/proxylist.save ] && $IPSET restore -! -f /etc/dtables/data/proxylist.save
-[ -e /etc/dtables/data/blacklist.save ] && $IPSET restore -! -f /etc/dtables/data/blacklist.save
-[ -e /etc/dtables/data/banlist.save ] && $IPSET restore -! -f /etc/dtables/data/banlist.save
-[ -e /etc/dtables/data/bogonlist.save ] && $IPSET restore -! -f /etc/dtables/data/bogonlist.save
-
-
-### Start Iptables ###
-
-
-# iptables-restore command
-IPTABLESRESTORE="iptables-restore"
-
-# Restore default configuration
-$IPTABLESRESTORE -n /etc/dtables/conf/iptables.conf
+# Save current sets
+if $IPSET list whitelist >/dev/null 2>&1; then
+	$IPSET save whitelist -f /etc/dtables/data/whitelist.save
+fi
+if $IPSET list proxylist >/dev/null 2>&1; then
+	$IPSET save proxylist -f /etc/dtables/data/proxylist.save
+fi
+if $IPSET list blacklist >/dev/null 2>&1; then
+	$IPSET save blacklist -f /etc/dtables/data/blacklist.save
+fi
+if $IPSET list banlist >/dev/null 2>&1; then
+	$IPSET save banlist -f /etc/dtables/data/banlist.save
+fi
+if $IPSET list bogonlist >/dev/null 2>&1; then
+	$IPSET save bogonlist -f /etc/dtables/data/bogonlist.save
+fi

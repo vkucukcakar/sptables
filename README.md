@@ -72,6 +72,8 @@ Installation file tested on Debian Stretch, Ubuntu 17, CentOS 7
 * Disable service start on boot
 	$ systemctl disable dtables
 
+* Manually save current sets without restarting service
+	$ /etc/dtables/script/dtables.save.sh
  
 ## Details
 
@@ -95,10 +97,13 @@ Basically you just need to check up or edit "INPUT FILTERS" and "OUTPUT FILTERS"
 ### Pre-defined IP Sets
 
 dtables have 4 pre-defined IP sets:
-* "whitelist"	: Manually filled whitelist to bypass connection limits by default. (You should add your ssh IP address here to not lock yourself out of your server.)
+* "whitelist"	: Manually filled whitelist to bypass filters by default. (You should add your ssh IP address here to not lock yourself out of your server.)
+* "proxylist"	: Trusted proxylist to bypass filters for certain ports. (Intended to be filled manually or automatically with trusted reverse proxy / CDN IP addresses)
 * "blacklist"	: Temporary blacklist with timeout, used automatically for DDOS protection.
 * "banlist"		: Manually filled IP ban list
-* "bogonlist"	: Manually filled bogon IP list (Intended to be filled manually or automatically with bogon IP addresses)
+* "bogonlist"	: Bogon IP list (Intended to be filled manually or automatically with bogon IP addresses)
+
+You can use scripts like ip-list-updater (or a custom bash script) to periodically update proxylist and bogonlist. Please see: https://github.com/vkucukcakar/ip-list-updater
 
 ### Blacklist Examples
 

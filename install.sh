@@ -116,6 +116,7 @@ $SYSCTL --quiet --system
 { echo -e "\nSetting permissions"; } 2> /dev/null;
 chmod +x /etc/dtables/script/dtables.start.sh
 chmod +x /etc/dtables/script/dtables.stop.sh
+chmod +x /etc/dtables/script/dtables.save.sh
 
 # Create symbolic links for systemd services
 { echo -e "\nCreating symbolic link"; } 2> /dev/null;
