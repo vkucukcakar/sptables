@@ -1,29 +1,40 @@
-# dtables
+# sptables
 
-Docker compatible Iptables firewall
+Pure Iptables firewall for servers
 
-* Compatible with Docker, let Docker continue managing iptables
-* Well commented bare Iptables rules 
-* Simple structure with a few chains 
-* Utilise the documented DOCKER-USER chain for Docker compatibility
-* Same filters apply for host and Docker containers
-* Dos/DDoS protection, connection limiting, port scanning protection, ping limitation, port knocking patterns implemented in pure Iptables
+sptables is a basic pure Iptables firewall for servers that also comes with Docker compatibility. sptables includes example pure Iptables rules and patterns against some known attacks. 
+Actually, sptables consists of Iptables, Ipset, Sysctl configuration files and start, stop, reload, save scripts with a Systemd unit file.
+
+Standalone mode properties:
+
+* Well commented pure Iptables rules
+* Simple structure with a few chains
+* Pre-defined protection patterns and examples included
+* DoS/DDoS mitigation, connection limiting, port scanning protection, ping limitation, port knocking patterns implemented in pure Iptables
 * Iptables rules utilising IPset Blacklist with timeout
 * Bare Iptables with no daemons continuously running
 * A basic sysctl hardening configuration is included
 
+Docker mode properties:
+
+* Utilise the documented DOCKER-USER chain for Docker compatibility
+* Let Docker continue managing iptables
+* Same filters apply for host and Docker containers
 
 ## Requirements
 
-* Docker 17.06 or later
 * Iptables
 * IPset
 * Systemd
 * Root permissions
 
-Tested on Debian Stretch (Requirements except Docker is already present)
+Tested on Debian Stretch (Requirements are already present)
 Installation file tested on Debian Stretch, Ubuntu 17, CentOS 7
+With a manual installation, sptables can be used even without Systemd.
 
+## Optional
+
+* Docker 17.06 or later
 
 ## Installation
 
@@ -31,9 +42,9 @@ Installation file tested on Debian Stretch, Ubuntu 17, CentOS 7
 
 * Clone from github and run installation script.
 
-	$ git clone https://github.com/vkucukcakar/dtables.git	
+	$ git clone https://github.com/vkucukcakar/sptables.git	
 
-	$ cd dtables
+	$ cd sptables
 	
 	$ ./install.sh
 		
@@ -41,9 +52,9 @@ Installation file tested on Debian Stretch, Ubuntu 17, CentOS 7
 
 	$ chmod +x ./install.sh
 	
-* Edit configuration files at "/etc/dtables/conf/*". 
+* Edit configuration files at "/etc/sptables/conf/*". 
   
-  At least edit "/etc/dtables/conf/iptables.conf" according to your server configuration before starting or enabling dtables.  
+  At least edit "/etc/sptables/conf/iptables.conf" according to your server configuration before starting or enabling sptables.  
   
   Add your ssh IP address to whitelist to not lock yourself out of your server.
   
@@ -51,42 +62,48 @@ Installation file tested on Debian Stretch, Ubuntu 17, CentOS 7
 	
 * Start to test and enable if everything works fine (See usage below)
 
+## Manual Installation
+
+If ./install.sh does not work for you, please check if requiremets are installed successfully and check command paths in ./install.sh.
+
+If you do not have Systemd and you want to use sptables without Systemd, you can try manual installation.
+To manually install sptables, copy the files under files/* to /etc/sptables/*, give /etc/sptables/*.sh execute permission, and go with these scripts after editing configurations.
 
 ## Usage
 
 * Start service
-	$ systemctl start dtables
+	$ systemctl start sptables
 
 * Restart service
-	$ systemctl restart dtables
+	$ systemctl restart sptables
 
 * Get service status
-	$ systemctl status dtables
+	$ systemctl status sptables
 	
 * Stop service
-	$ systemctl stop dtables
+	$ systemctl stop sptables
 
 * Enable service start on boot
-	$ systemctl enable dtables
+	$ systemctl enable sptables
 
 * Disable service start on boot
-	$ systemctl disable dtables
+	$ systemctl disable sptables
 
 * Manually save current sets without restarting service
-	$ /etc/dtables/script/dtables.save.sh
+	$ /etc/sptables/save.sh
  
 ## Details
 
 ### Configuration Files
 
-Configuration files are at copied at location /etc/dtables/conf/* on installation and symbolic links are created on system folders.
+Configuration files are at copied at location /etc/sptables/conf/* on installation.
 
-* /etc/dtables/conf/iptables.conf			: Well commented Iptables configuration file. 
-  You must edit this file to tune it for your server before starting or enabling dtables. (Open ports, define limits etc...)
-* /etc/dtables/conf/iptables.stop.conf		: Iptables stop configuration file.
-* /etc/dtables/conf/sysctl.hardening.conf	: Sysctl hardening file.
+* /etc/sptables/conf/iptables.conf			: Well commented Iptables configuration file. 
+  You must edit this file to tune it for your server before starting or enabling sptables. (Open ports, define limits etc...)
+  This file is the heart of the firewall and contains example patterns, that you should edit according to your needs!
+* /etc/sptables/conf/sysctl.hardening.conf	: Sysctl hardening file.
   You can edit this file according to your needs. Some options directly affect iptables modules like conntrack etc...
-* /etc/dtables/conf/ipset.conf				: IPset configuration file that creates the four pre-defined sets explained below. You usually have nothing to do with this file unless you need to create other custom sets.
+* /etc/sptables/conf/ipset.conf				: IPset configuration file that creates the four pre-defined sets explained below. You usually have nothing to do with this file unless you need to create other custom sets.
 
 ### Iptables Rules
 
@@ -96,10 +113,10 @@ Basically you just need to check up or edit "INPUT FILTERS" and "OUTPUT FILTERS"
 
 ### Pre-defined IP Sets
 
-dtables have 4 pre-defined IP sets:
+sptables have 5 pre-defined IP sets:
 * "whitelist"	: Manually filled whitelist to bypass filters by default. (You should add your ssh IP address here to not lock yourself out of your server.)
 * "proxylist"	: Trusted proxylist to bypass filters for certain ports. (Intended to be filled manually or automatically with trusted reverse proxy / CDN IP addresses)
-* "blacklist"	: Temporary blacklist with timeout, used automatically for DDOS protection.
+* "blacklist"	: Temporary blacklist with timeout, used automatically for DoS/DDoS mitigation.
 * "banlist"		: Manually filled IP ban list
 * "bogonlist"	: Bogon IP list (Intended to be filled manually or automatically with bogon IP addresses)
 
@@ -107,8 +124,8 @@ You can use scripts like ip-list-updater (or a custom bash script) to periodical
 
 ### Blacklist Examples
 
-With default rules, there is a blacklist with a timeout which can be configured by editing "/etc/dtables/conf/iptables.conf". 
-The blacklist is also used for DoS/DDoS mitigiation.
+With default rules, there is a blacklist with a timeout which can be configured by editing "/etc/sptables/conf/iptables.conf". 
+The blacklist is also used for DoS/DDoS mitigation.
 
 Example use cases:
 
@@ -131,10 +148,10 @@ IP addresses can be added to and deleted from manulally working IP sets with ips
 	
 	$ ipset del banlist 1.2.3.4
 
-	
 ## Caveats
 
 * Add your ssh IP address to whitelist to not lock yourself out of your server. 
-* Any Iptables rules, connection limits for DDOS mitigiation and Sysctl options are not advisory. 
+* Example rules are mostly given to prevent incoming attack patterns.
+* For DDoS mitigation, you may wish to limit a full Class C network with /24 netmask at least. Please read the comments in /etc/sptables/conf/iptables.conf
+* Any Iptables rules, connection limits for DoS/DDoS mitigation and Sysctl options are not advisory. 
   You should set you own connection limits depending on conditions and the services running on your server.
-

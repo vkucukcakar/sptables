@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 ###
-# dtables - Docker compatible Iptables firewall
+# sptables - Pure Iptables firewall for servers
 #
 # Copyright (c) 2018, Volkan Kucukcakar
 # All rights reserved.
@@ -28,14 +28,14 @@
 ###
 
 ###
-# This file is a part of dtables - Docker compatible Iptables firewall
+# This file is a part of sptables - Pure Iptables firewall for servers
 # Filename		: install.sh
-# Description	: dtables installer
+# Description	: sptables installer
 ###
 
 
 # This installation file tested on Debian Stretch, Ubuntu 17, CentOS 7
-# Requires Docker, iptables, ipset, systemd to be installed
+# Requires iptables, ipset, systemd to be installed
 
 
 ### Pre-defined command paths, correct if something goes wrong! ###
@@ -67,7 +67,7 @@ SYSCTLD="/etc/sysctl.d"
 [ `id -u` -eq 0 ] || { echo "Error: This script must be run as root. Please run as root or try sudo."; exit 1; }
 
 # Check if Docker installed
-docker --version >/dev/null 2>&1 || { echo "Error: Docker not installed"; exit 1; }
+docker --version >/dev/null 2>&1 || echo "Notice: Docker is not installed. No problem! sptables can run in both Docker and standalone mode.";
 
 # Check if ipset available
 $IPSET --version >/dev/null 2>&1 || { echo "Error: IPset not available"; exit 1; }
@@ -88,7 +88,7 @@ $SYSCTL --version >/dev/null 2>&1 || { echo "Error: sysctl not available"; exit 
 [ -d $SYSCTLD ] || { echo "Error: sysctl.d path not found"; exit 1; }
 
 # Check if already installed
-[ -d /etc/dtables ] && { echo "Error: Already installed. Delete the old installation ( rm -r /etc/dtables ) to repair or install again."; exit 1; }
+[ -d /etc/sptables ] && { echo "Error: Already installed. Delete the old installation ( rm -r /etc/sptables ) to repair or install again."; exit 1; }
 
 
 ### Start installation ###
@@ -102,33 +102,34 @@ set -x
 
 # Copy files
 { echo -e "Copying files"; } 2> /dev/null;
-mkdir /etc/dtables
-cp -rf files/* /etc/dtables/
+mkdir /etc/sptables
+cp -rf files/* /etc/sptables/
 
 # Apply Sysctl hardening configuration
 { echo -e "Applying Sysctl hardening configuration"; } 2> /dev/null;
 # Make symbolic link to sysctl.hardening.conf
-ln -sf /etc/dtables/conf/sysctl.hardening.conf $SYSCTLD/zzz-sysctl.hardening.conf
+ln -sf /etc/sptables/conf/sysctl.hardening.conf $SYSCTLD/zzz-sysctl.hardening.conf
 # Make sysctl read all configuration files again
 $SYSCTL --quiet --system
 
 # Give execute permission to scripts
 { echo -e "\nSetting permissions"; } 2> /dev/null;
-chmod +x /etc/dtables/script/dtables.start.sh
-chmod +x /etc/dtables/script/dtables.stop.sh
-chmod +x /etc/dtables/script/dtables.save.sh
+chmod +x /etc/sptables/start.sh
+chmod +x /etc/sptables/stop.sh
+chmod +x /etc/sptables/reload.sh
+chmod +x /etc/sptables/save.sh
 
 # Create symbolic links for systemd services
 { echo -e "\nCreating symbolic link"; } 2> /dev/null;
 [ -d $USRSYSTEMD/system ] || mkdir $USRSYSTEMD/system
-ln -sf /etc/dtables/service/dtables.service $USRSYSTEMD/system/
+ln -sf /etc/sptables/service/sptables.service $USRSYSTEMD/system/
 
 # Reload systemd manager configuration
 { echo -e "\nReloading systemd manager configuration"; } 2> /dev/null;
 $SYSTEMCTL daemon-reload
 
 # Echo sysctl notice
-{ echo -e "\nWarning: Your default sysctl configuration is not modified but a new symbolic link to sysctl hardening configuration is created in $SYSCTLD/.\n\nDefault sysctl configuration file /etc/sysctl.conf has always higher predecence over vendor configurations.\n\nPlease make sure that /etc/sysctl.conf does not contain directives overriding sysctl hardening configuration at /etc/dtables/conf/sysctl.hardening.conf"; } 2> /dev/null;
+{ echo -e "\nWarning: Your default sysctl configuration is not modified but a new symbolic link to sysctl hardening configuration is created in $SYSCTLD/.\n\nDefault sysctl configuration file /etc/sysctl.conf has always higher predecence over vendor configurations.\n\nPlease make sure that /etc/sysctl.conf does not contain directives overriding sysctl hardening configuration at /etc/sptables/conf/sysctl.hardening.conf"; } 2> /dev/null;
 
 # Completed
-{ echo -e "\nInstallation completed."; } 2> /dev/null;
+{ echo -e "\nInstallation completed. Please see README.md for usage."; } 2> /dev/null;

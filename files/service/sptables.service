@@ -27,30 +27,21 @@
 
 ###
 # This file is a part of sptables - Pure Iptables firewall for servers
-# Filename		: ipset.conf
-# Path			: /etc/sptables/conf/ipset.conf
-# Description	: IPset configuration file
+# Filename		: sptables.service
+# Description	: sptables Systemd unit file
 ###
 
 
-# whitelist: Manually filled whitelist to bypass filters by default.
-create whitelist hash:net family inet hashsize 1024 maxelem 65536
+[Unit]
+Description=sptables - Pure Iptables firewall for servers
+Before=network-pre.target
 
-# proxylist: Trusted proxylist to bypass filters for certain ports. (Intended to be filled manually or automatically with trusted reverse proxy / CDN IP addresses)
-create proxylist hash:net family inet hashsize 1024 maxelem 65536
+[Service]
+Type=oneshot
+ExecStart=/etc/sptables/start.sh
+ExecReload=/etc/sptables/reload.sh
+RemainAfterExit=yes
+ExecStopPost=/etc/sptables/stop.sh
 
-# blacklist: Temporary blacklist with timeout, used automatically for DDOS protection
-create blacklist hash:net family inet hashsize 1024 maxelem 65536 timeout 3600
-
-# banlist: Manually filled IP ban list
-create banlist hash:net family inet hashsize 1024 maxelem 65536
-
-# bogonlist: Bogon IP list (Intended to be filled manually or automatically with bogon IP addresses)
-create bogonlist hash:net family inet hashsize 1024 maxelem 131072
-
-# Flush sets if already created before
-flush whitelist
-flush proxylist
-flush blacklist
-flush banlist
-flush bogonlist
+[Install]
+WantedBy=multi-user.target

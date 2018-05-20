@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 ###
 # sptables - Pure Iptables firewall for servers
 #
@@ -27,30 +29,34 @@
 
 ###
 # This file is a part of sptables - Pure Iptables firewall for servers
-# Filename		: ipset.conf
-# Path			: /etc/sptables/conf/ipset.conf
-# Description	: IPset configuration file
+# Filename		: save.sh
+# Path			: /etc/sptables/save.sh
+# Description	: Manually save current sets without restarting service (Can be executed manually)
 ###
 
 
-# whitelist: Manually filled whitelist to bypass filters by default.
-create whitelist hash:net family inet hashsize 1024 maxelem 65536
+# ipset command
+IPSET="ipset"
 
-# proxylist: Trusted proxylist to bypass filters for certain ports. (Intended to be filled manually or automatically with trusted reverse proxy / CDN IP addresses)
-create proxylist hash:net family inet hashsize 1024 maxelem 65536
+# Abort script on error
+set -e
 
-# blacklist: Temporary blacklist with timeout, used automatically for DDOS protection
-create blacklist hash:net family inet hashsize 1024 maxelem 65536 timeout 3600
+# Save current sets
+echo "Saving current sets"
+if $IPSET list whitelist >/dev/null 2>&1; then
+	$IPSET save whitelist -f /etc/sptables/data/whitelist.save
+fi
+if $IPSET list proxylist >/dev/null 2>&1; then
+	$IPSET save proxylist -f /etc/sptables/data/proxylist.save
+fi
+if $IPSET list blacklist >/dev/null 2>&1; then
+	$IPSET save blacklist -f /etc/sptables/data/blacklist.save
+fi
+if $IPSET list banlist >/dev/null 2>&1; then
+	$IPSET save banlist -f /etc/sptables/data/banlist.save
+fi
+if $IPSET list bogonlist >/dev/null 2>&1; then
+	$IPSET save bogonlist -f /etc/sptables/data/bogonlist.save
+fi
 
-# banlist: Manually filled IP ban list
-create banlist hash:net family inet hashsize 1024 maxelem 65536
-
-# bogonlist: Bogon IP list (Intended to be filled manually or automatically with bogon IP addresses)
-create bogonlist hash:net family inet hashsize 1024 maxelem 131072
-
-# Flush sets if already created before
-flush whitelist
-flush proxylist
-flush blacklist
-flush banlist
-flush bogonlist
+echo "Save script executed"

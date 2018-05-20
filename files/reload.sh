@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 ###
 # sptables - Pure Iptables firewall for servers
 #
@@ -27,30 +29,41 @@
 
 ###
 # This file is a part of sptables - Pure Iptables firewall for servers
-# Filename		: ipset.conf
-# Path			: /etc/sptables/conf/ipset.conf
-# Description	: IPset configuration file
+# Filename		: start.sh
+# Path			: /etc/sptables/start.sh
+# Description	: sptables service reload file executed by Systemd
 ###
 
 
-# whitelist: Manually filled whitelist to bypass filters by default.
-create whitelist hash:net family inet hashsize 1024 maxelem 65536
+# sysctl command
+SYSCTL="sysctl"
 
-# proxylist: Trusted proxylist to bypass filters for certain ports. (Intended to be filled manually or automatically with trusted reverse proxy / CDN IP addresses)
-create proxylist hash:net family inet hashsize 1024 maxelem 65536
+# ipset command
+IPSET="ipset"
 
-# blacklist: Temporary blacklist with timeout, used automatically for DDOS protection
-create blacklist hash:net family inet hashsize 1024 maxelem 65536 timeout 3600
+# iptables command
+IPTABLES="iptables"
 
-# banlist: Manually filled IP ban list
-create banlist hash:net family inet hashsize 1024 maxelem 65536
+# iptables-restore command
+IPTABLESRESTORE="iptables-restore"
 
-# bogonlist: Bogon IP list (Intended to be filled manually or automatically with bogon IP addresses)
-create bogonlist hash:net family inet hashsize 1024 maxelem 131072
+# Abort script on error
+set -e
 
-# Flush sets if already created before
-flush whitelist
-flush proxylist
-flush blacklist
-flush banlist
-flush bogonlist
+# Make sysctl read all configuration files again
+echo "Making sysctl read all configuration files again"
+$SYSCTL --quiet --system
+
+# Restore default ipset configuration
+echo "Restoring default ipset configurations"
+$IPSET restore -! -f /etc/sptables/conf/ipset.conf
+
+# Restore the saved sets (-! parameter will prevent ipset failing on multiple create statements)
+echo "Restoring the saved sets"
+[ -e /etc/sptables/data/whitelist.save ] && $IPSET restore -! -f /etc/sptables/data/whitelist.save
+[ -e /etc/sptables/data/proxylist.save ] && $IPSET restore -! -f /etc/sptables/data/proxylist.save
+[ -e /etc/sptables/data/blacklist.save ] && $IPSET restore -! -f /etc/sptables/data/blacklist.save
+[ -e /etc/sptables/data/banlist.save ] && $IPSET restore -! -f /etc/sptables/data/banlist.save
+[ -e /etc/sptables/data/bogonlist.save ] && $IPSET restore -! -f /etc/sptables/data/bogonlist.save
+
+echo "Reload script executed"
