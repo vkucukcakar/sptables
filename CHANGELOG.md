@@ -1,6 +1,6 @@
 # Changelog
 
-## v.2.0.0
+## v2.0.0
 
 - Renamed to sptables (sptables - Pure Iptables firewall for servers)
 - Still Docker compatible
