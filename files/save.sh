@@ -46,17 +46,20 @@ echo "Saving current sets"
 if $IPSET list whitelist >/dev/null 2>&1; then
 	$IPSET save whitelist -f /etc/sptables/data/whitelist.save
 fi
-if $IPSET list proxylist >/dev/null 2>&1; then
-	$IPSET save proxylist -f /etc/sptables/data/proxylist.save
-fi
 if $IPSET list blacklist >/dev/null 2>&1; then
 	$IPSET save blacklist -f /etc/sptables/data/blacklist.save
 fi
-if $IPSET list banlist >/dev/null 2>&1; then
-	$IPSET save banlist -f /etc/sptables/data/banlist.save
+if $IPSET list proxylist >/dev/null 2>&1; then
+	$IPSET save proxylist -f /etc/sptables/data/proxylist.save
+fi
+if $IPSET list crawlerlist >/dev/null 2>&1; then
+	$IPSET save crawlerlist -f /etc/sptables/data/crawlerlist.save
 fi
 if $IPSET list bogonlist >/dev/null 2>&1; then
 	$IPSET save bogonlist -f /etc/sptables/data/bogonlist.save
+fi
+if $IPSET list banlist >/dev/null 2>&1; then
+	$IPSET save banlist -f /etc/sptables/data/banlist.save
 fi
 
 echo "Save script executed"

@@ -73,21 +73,25 @@ if $IPSET list whitelist >/dev/null 2>&1; then
 	$IPSET save whitelist -f /etc/sptables/data/whitelist.save
 	$IPSET destroy whitelist
 fi
-if $IPSET list proxylist >/dev/null 2>&1; then
-	$IPSET save proxylist -f /etc/sptables/data/proxylist.save
-	$IPSET destroy proxylist
-fi
 if $IPSET list blacklist >/dev/null 2>&1; then
 	$IPSET save blacklist -f /etc/sptables/data/blacklist.save
 	$IPSET destroy blacklist
 fi
-if $IPSET list banlist >/dev/null 2>&1; then
-	$IPSET save banlist -f /etc/sptables/data/banlist.save
-	$IPSET destroy banlist
+if $IPSET list proxylist >/dev/null 2>&1; then
+	$IPSET save proxylist -f /etc/sptables/data/proxylist.save
+	$IPSET destroy proxylist
+fi
+if $IPSET list crawlerlist >/dev/null 2>&1; then
+	$IPSET save crawlerlist -f /etc/sptables/data/crawlerlist.save
+	$IPSET destroy crawlerlist
 fi
 if $IPSET list bogonlist >/dev/null 2>&1; then
 	$IPSET save bogonlist -f /etc/sptables/data/bogonlist.save
 	$IPSET destroy bogonlist
+fi
+if $IPSET list banlist >/dev/null 2>&1; then
+	$IPSET save banlist -f /etc/sptables/data/banlist.save
+	$IPSET destroy banlist
 fi
 
 echo "Stop script executed"

@@ -1,5 +1,13 @@
 # Changelog
 
+## v3.0.0
+
+- Changed IP set structure
+- Swapped IP set names "blacklist" and "banlist". "whitelist" and "blacklist" are now for user, "banlist" is internally used by Iptables rules.
+- Added timeout support to IP sets named "whitelist" and "blacklist"
+- Added IP set named "crawlerlist"
+- Updated examples
+
 ## v2.0.0
 
 - Renamed to sptables (sptables - Pure Iptables firewall for servers)

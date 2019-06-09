@@ -70,22 +70,22 @@ SYSCTLD="/etc/sysctl.d"
 docker --version >/dev/null 2>&1 || echo "Notice: Docker is not installed. No problem! sptables can run in both Docker and standalone mode.";
 
 # Check if ipset available
-$IPSET --version >/dev/null 2>&1 || { echo "Error: IPset not available"; exit 1; }
+$IPSET --version >/dev/null 2>&1 || { echo "Error: IPset not available, please install IPset first."; exit 1; }
 
 # Check if iptables available
-$IPTABLES --version >/dev/null 2>&1 || { echo "Error: Iptables not available"; exit 1; }
+$IPTABLES --version >/dev/null 2>&1 || { echo "Error: Iptables not available, please install Iptables first."; exit 1; }
 
 # Check if systemctl available
-$SYSTEMCTL --version >/dev/null 2>&1 || { echo "Error: Systemd not available"; exit 1; }
+$SYSTEMCTL --version >/dev/null 2>&1 || { echo "Error: Systemd not available, please install Systemd first or use manual installation described in README.md."; exit 1; }
 
 # Check if Systemd vendor path exists
-[ -d $USRSYSTEMD ] || { echo "Error: Systemd vendor path not found"; exit 1; }
+[ -d $USRSYSTEMD ] || { echo "Error: Systemd vendor path not found."; exit 1; }
 
 # Check if sysctl available
-$SYSCTL --version >/dev/null 2>&1 || { echo "Error: sysctl not available"; exit 1; }
+$SYSCTL --version >/dev/null 2>&1 || { echo "Error: sysctl not available."; exit 1; }
 
 # Check if sysctl.d path exists
-[ -d $SYSCTLD ] || { echo "Error: sysctl.d path not found"; exit 1; }
+[ -d $SYSCTLD ] || { echo "Error: sysctl.d path not found."; exit 1; }
 
 # Check if already installed
 [ -d /etc/sptables ] && { echo "Error: Already installed. Delete the old installation ( rm -r /etc/sptables ) to repair or install again."; exit 1; }
