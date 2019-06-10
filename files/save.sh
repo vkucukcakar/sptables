@@ -52,8 +52,8 @@ fi
 if $IPSET list proxylist >/dev/null 2>&1; then
 	$IPSET save proxylist -f /etc/sptables/data/proxylist.save
 fi
-if $IPSET list crawlerlist >/dev/null 2>&1; then
-	$IPSET save crawlerlist -f /etc/sptables/data/crawlerlist.save
+if $IPSET list seclist >/dev/null 2>&1; then
+	$IPSET save seclist -f /etc/sptables/data/seclist.save
 fi
 if $IPSET list bogonlist >/dev/null 2>&1; then
 	$IPSET save bogonlist -f /etc/sptables/data/bogonlist.save

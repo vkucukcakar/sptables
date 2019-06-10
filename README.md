@@ -144,7 +144,7 @@ sptables have 6 pre-defined IP sets:
 * "whitelist"	: Manually filled whitelist to bypass filters by default. (You should add your ssh IP address here to not lock yourself out of your server.)
 * "blacklist"	: Manually filled IP blacklist
 * "proxylist"	: Trusted proxylist to bypass filters for certain ports. (Intended to be filled manually or automatically with trusted reverse proxy / CDN IP addresses)
-* "crawlerlist"	: Crawler list to bypass filters for certain ports. (Intended to be filled manually or automatically with trusted crawler/search engine IP addresses)
+* "seclist"		: Search engine crawler list to bypass filters for certain ports. (Intended to be filled manually or automatically with trusted crawler/search engine IP addresses)
 * "bogonlist"	: Bogon IP list (Intended to be filled manually or automatically with bogon IP addresses)
 * "banlist"		: Internally used temporary list with timeout, used automatically for DoS/DDoS mitigation
 
@@ -198,11 +198,11 @@ IP addresses can be added to and deleted from manulally working IP sets with ips
 IP set named "proxylist" can be filled up with trusted proxy IP addresses which bypass filters for certain ports.
 The set can be filled either manually or automatically with the help of an IP updater script like [ip-list-updater](https://github.com/vkucukcakar/ip-list-updater)
 
-### Allowing crawlers/search engines
+### Allowing search engine crawlers
 
-IP set named "crawlerlist" can be filled up with crawlers' IP addresses which bypass filters for certain ports.
-Many crawlers (like Googlebot) may not have known static IP list.
-You can use a custom script to detect crawler IP and add it to the list.
+IP set named "seclist" can be filled up with search engine crawlers' IP addresses which bypass filters for certain ports.
+Many search engine crawlers (like Googlebot) may not have known static IP list and can be detected by DNS queries.
+You can use a custom script to detect search engine crawler IP and add it to the list.
 
 ### Blocking bogon IP range
 
