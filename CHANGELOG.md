@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.1.0
+
+- Fixed an important bug prevents firewall starting correctly in standalone mode
+
 ## v3.0.0
 
 - Changed IP set structure

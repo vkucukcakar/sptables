@@ -81,13 +81,8 @@ else
 	# Standalone mode (Docker not installed or DOCKER-USER chain not found)
 	echo "Initializing Iptables in standalone mode."
 
-	# Flush old iptables rules, delete user chains
-	$IPTABLES -F
-	$IPTABLES -X
-	$IPTABLES -t mangle -F
-	$IPTABLES -t mangle -X
-	$IPTABLES -t nat -F
-	$IPTABLES -t nat -X
+	# Restore default configuration (Common part) without flushing previous content
+	$IPTABLESRESTORE -n /etc/sptables/conf/iptables.conf
 fi
 
 echo "Start script executed"
