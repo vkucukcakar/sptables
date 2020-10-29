@@ -241,7 +241,7 @@ Luckily, the default iptables package on Debian is a wrapper for the nftables.
 So, sptables runs without any problems.
 
 While sptables is a standalone firewall, Docker was my first starting point and Docker supports iptables.
-On the other hand, sptables have some complex rules and structure to automatically convert to nftables.
+On the other hand, sptables have some complex rules (tested well in the past) and structure.
 In the future, I can consider migrating to native nftables if really necessary.
 
 ## Caveats
