@@ -223,7 +223,7 @@ You can use a custom script to detect search engine crawler IP and add it to the
 IP set named "bogonlist" can be filled up with bogon IP addresses which will be blocked.
 The set can be filled either manually or automatically with the help of an IP updater script like [ip-list-updater](https://github.com/vkucukcakar/ip-list-updater)
 
-## No IPv6 support
+## IPv6 support
 
 IPv6 is not supported, you should consider disabling IPv6 from sysctl or adding your own rules with ip6tables.
 You can still use sptables and IPv6 together by adding your own rules with ip6tables, sptables only handles IPv4 traffic.
@@ -236,7 +236,7 @@ Another reason was the possibility of switching to native nftables in the future
 
 ## nftables compatibility
 
-Now, nftables is the default firewalling framework in Debian and some other modern distros.
+Now, nftables is the default firewall framework in Debian and some other modern distros.
 Luckily, the default iptables package on Debian is a wrapper for the nftables. 
 So, sptables runs without any problems.
 
