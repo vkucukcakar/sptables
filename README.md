@@ -44,10 +44,9 @@ With manual installation, sptables can be used even without Systemd.
 
 * Clone from github and run installation script.
 
-	$ git clone https://github.com/vkucukcakar/sptables.git	
 
+	$ git clone https://github.com/vkucukcakar/sptables.git	
 	$ cd sptables
-	
 	$ ./install.sh
 		
 * Give execute permission if not cloned from github
@@ -77,8 +76,8 @@ To manually install sptables, copy the files under files/* to /etc/sptables/*, g
 ## Uninstallation
 
 	# Stop and disable the service
-	$ systemctl stop sptables
-	$ systemctl disable sptables
+		$ systemctl stop sptables
+		$ systemctl disable sptables
 	
 	# You can try manually stopping if Systemd is not used
 	$ /etc/sptables/stop.sh
