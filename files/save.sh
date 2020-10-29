@@ -43,11 +43,11 @@ set -e
 
 # Save current sets
 echo "Saving current sets"
-if $IPSET list whitelist >/dev/null 2>&1; then
-	$IPSET save whitelist -f /etc/sptables/data/whitelist.save
+if $IPSET list allowlist >/dev/null 2>&1; then
+	$IPSET save allowlist -f /etc/sptables/data/allowlist.save
 fi
-if $IPSET list blacklist >/dev/null 2>&1; then
-	$IPSET save blacklist -f /etc/sptables/data/blacklist.save
+if $IPSET list denylist >/dev/null 2>&1; then
+	$IPSET save denylist -f /etc/sptables/data/denylist.save
 fi
 if $IPSET list proxylist >/dev/null 2>&1; then
 	$IPSET save proxylist -f /etc/sptables/data/proxylist.save

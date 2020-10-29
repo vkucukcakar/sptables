@@ -1,5 +1,10 @@
 # Changelog
 
+## v4.0.0
+
+- Renamed the words in lists "whitelist", "blacklist" to "allowlist", "denylist" respectively
+- Changed IP set structure
+
 ## v3.1.0
 
 - Fixed an important bug prevents firewall starting correctly in standalone mode

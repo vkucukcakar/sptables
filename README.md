@@ -11,7 +11,7 @@ Standalone mode properties:
 * Simple structure with a few chains
 * Pre-defined protection patterns and examples included
 * DoS/DDoS mitigation, connection limiting, port scanning protection, ping limitation, port knocking patterns implemented in pure Iptables
-* Iptables rules utilising IPset Blacklist with timeout
+* Iptables rules utilising IPset denylist with timeout
 * Bare Iptables with no daemons continuously running
 * A basic sysctl hardening configuration is included
 
@@ -38,7 +38,7 @@ With manual installation, sptables can be used even without Systemd.
 
 ## Installation
 
-* Version 2 and before are not compatible with version 3. Please uninstall version 2 before installing version 3. (See the Uninstallation section below)
+* Previous versions are not compatible with version 4. Please uninstall older version before installing version 4. (See the Uninstallation section below)
 
 * Installation also requires root permissions. (You can try sudo)
 
@@ -56,12 +56,13 @@ With manual installation, sptables can be used even without Systemd.
 	
 * Edit configuration files at "/etc/sptables/conf/*". 
   
-  At least edit "/etc/sptables/conf/iptables.conf" according to your server configuration before starting or enabling sptables.  
+  Edit "/etc/sptables/conf/iptables.conf" and "/etc/sptables/conf/iptables.conf" according to your server configuration before starting or enabling sptables.
+  At least, change "eth0" with your network interface name!
   
 	
-* Start the service (See usage below) and add your ssh IP address to whitelist to not lock yourself out of your server.
+* Start the service (See usage below) and add your ssh IP address to allowlist to not lock yourself out of your server.
   
-	$ ipset add whitelist 192.168.1.2
+	$ ipset add allowlist 192.168.1.2
 
 * Test and enable the service if everything works fine (See usage below)
 
@@ -141,8 +142,8 @@ Basically you just need to check up or edit "INPUT FILTERS" and "OUTPUT FILTERS"
 ### Pre-defined IP Sets
 
 sptables have 6 pre-defined IP sets:
-* "whitelist"	: Manually filled whitelist to bypass filters by default. (You should add your ssh IP address here to not lock yourself out of your server.)
-* "blacklist"	: Manually filled IP blacklist
+* "allowlist"	: Manually filled allowlist to bypass filters by default. (You should add your ssh IP address here to not lock yourself out of your server.)
+* "denylist"	: Manually filled IP denylist
 * "proxylist"	: Trusted proxylist to bypass filters for certain ports. (Intended to be filled manually or automatically with trusted reverse proxy / CDN IP addresses)
 * "seclist"		: Search engine crawler list to bypass filters for certain ports. (Intended to be filled manually or automatically with trusted crawler/search engine IP addresses)
 * "bogonlist"	: Bogon IP list (Intended to be filled manually or automatically with bogon IP addresses)
@@ -152,46 +153,46 @@ You can use scripts like [ip-list-updater](https://github.com/vkucukcakar/ip-lis
 
 ### DoS/DDoS mitigation Examples
 
-With default rules, there is a blacklist with a timeout which can be configured by editing "/etc/sptables/conf/iptables.conf". 
-The blacklist is also used for DoS/DDoS mitigation.
+With default rules, there is a denylist with a timeout which can be configured by editing "/etc/sptables/conf/iptables.conf". 
+The denylist is also used for DoS/DDoS mitigation.
 IP set named "banlist" is internally used by Iptables to block attackers temporarily.
 
 Example use cases implemented in default rules:
 
-* e.g.: Any IP trying to connect with ssh with more than 10 new connections per 1 minute and a total of 5 connections (SSH brute-force attempt), is blacklisted for 1 hour.
-* e.g.: Any IP trying to connect with HTTP/HTTPS with more than 600 new connections per 1 minute is blacklisted for 1 hour.
-* e.g.: Any IP trying to open more than a total of 100 parallel HTTP/HTTPS connections, is blacklisted for 1 hour.
-* e.g.: Any IP trying to connect more than 8 different ports in 1 minute (possibly a port scanning attempt), is blacklisted for 1 hour.
+* e.g.: Any IP trying to connect with ssh with more than 10 new connections per 1 minute and a total of 5 connections (SSH brute-force attempt), is denylisted for 1 hour.
+* e.g.: Any IP trying to connect with HTTP/HTTPS with more than 600 new connections per 1 minute is denylisted for 1 hour.
+* e.g.: Any IP trying to open more than a total of 100 parallel HTTP/HTTPS connections, is denylisted for 1 hour.
+* e.g.: Any IP trying to connect more than 8 different ports in 1 minute (possibly a port scanning attempt), is denylisted for 1 hour.
 
-If you want to manually block an IP, use blacklist. See ipset examples below.
+If you want to manually block an IP, use denylist. See ipset examples below.
 
-### Manual whitelist/blacklist with IPset Examples:
+### Manually using allowlist/denylist with IPset Examples:
 
 IP addresses can be added to and deleted from manulally working IP sets with ipset command.
 
-	# Add IP to whitelist with default timeout 
-	$ ipset add whitelist 1.2.3.4
+	# Add IP to allowlist with default timeout 
+	$ ipset add allowlist 1.2.3.4
 
-	# Add IP to whitelist for 1 day, update timeout if IP already exists
-	$ ipset -exist add whitelist 1.2.3.4 timeout 86400
+	# Add IP to allowlist for 1 day, update timeout if IP already exists
+	$ ipset -exist add allowlist 1.2.3.4 timeout 86400
 	
-	# Add IP to whitelist permanently
-	$ ipset add whitelist 1.2.3.4 timeout 0
+	# Add IP to allowlist permanently
+	$ ipset add allowlist 1.2.3.4 timeout 0
 	
-	# Remove IP from whitelist
-	$ ipset del whitelist 1.2.3.4
+	# Remove IP from allowlist
+	$ ipset del allowlist 1.2.3.4
 
-	# Add IP to blacklist with default timeout
-	$ ipset add blacklist 1.2.3.4
+	# Add IP to denylist with default timeout
+	$ ipset add denylist 1.2.3.4
 	
-	# Add IP to blacklist for 1 day, update timeout if IP already exists
-	$ ipset -exist add blacklist 1.2.3.4 timeout 86400
+	# Add IP to denylist for 1 day, update timeout if IP already exists
+	$ ipset -exist add denylist 1.2.3.4 timeout 86400
 	
-	# Add IP to blacklist permanently
-	$ ipset add blacklist 1.2.3.4 timeout 0
+	# Add IP to denylist permanently
+	$ ipset add denylist 1.2.3.4 timeout 0
 	
-	# Remove IP from blacklist
-	$ ipset del blacklist 1.2.3.4
+	# Remove IP from denylist
+	$ ipset del denylist 1.2.3.4
 
 ### Allowing reverse proxies (Cloudflare etc...)
 
@@ -209,9 +210,30 @@ You can use a custom script to detect search engine crawler IP and add it to the
 IP set named "bogonlist" can be filled up with bogon IP addresses which will be blocked.
 The set can be filled either manually or automatically with the help of an IP updater script like [ip-list-updater](https://github.com/vkucukcakar/ip-list-updater)
 
+## No IPv6 support
+
+IPv6 is not supported, you should consider disabling IPv6 from sysctl or adding your own rules with ip6tables.
+You can still use sptables and IPv6 together by adding your own rules with ip6tables, sptables only handles IPv4 traffic.
+
+sptables is tied with iptables, not ip6tables.
+It is possible to use "some" of the iptables rules with ip6tables using "list:set" ipset type, but there are other incompatibilities.
+i.e. An IP mask (--hashlimit-srcmask or --connlimit-mask) of /32 means 1 IPv4 address but also 4,294,967,296 IPv6 addresses.
+It is possible to use two separate iptables.conf for IPv4 and IPv6, but I did not implement it currently for the sake of simplicity.
+Another reason was the possibility of switching to native nftables in the future.
+
+## nftables compatibility
+
+Now, nftables is the default firewalling framework in Debian and some other modern distros.
+Luckily, the default iptables package on Debian is a wrapper for the nftables. 
+So, sptables runs without any problems.
+
+While sptables is a standalone firewall, Docker was my first starting point and Docker supports iptables.
+On the other hand, sptables have some complex rules and structure to automatically convert to nftables.
+In the future, I can consider migrating to native nftables if really necessary.
+
 ## Caveats
 
-* Add your ssh IP address to whitelist to not lock yourself out of your server. 
+* Add your ssh IP address to allowlist to not lock yourself out of your server. 
 * Example rules are mostly given to prevent incoming attack patterns.
 * For DDoS mitigation, you may wish to limit a full Class C network with /24 netmask at least. Please read the comments in /etc/sptables/conf/iptables.conf
 * Any Iptables rules, connection limits for DoS/DDoS mitigation and Sysctl options are not advisory. 

@@ -60,8 +60,8 @@ $IPSET restore -! -f /etc/sptables/conf/ipset.conf
 
 # Restore the saved sets (-! parameter will prevent ipset failing on multiple create statements)
 echo "Restoring the saved sets"
-[ -e /etc/sptables/data/whitelist.save ] && $IPSET restore -! -f /etc/sptables/data/whitelist.save
-[ -e /etc/sptables/data/blacklist.save ] && $IPSET restore -! -f /etc/sptables/data/blacklist.save
+[ -e /etc/sptables/data/allowlist.save ] && $IPSET restore -! -f /etc/sptables/data/allowlist.save
+[ -e /etc/sptables/data/denylist.save ] && $IPSET restore -! -f /etc/sptables/data/denylist.save
 [ -e /etc/sptables/data/proxylist.save ] && $IPSET restore -! -f /etc/sptables/data/proxylist.save
 [ -e /etc/sptables/data/seclist.save ] && $IPSET restore -! -f /etc/sptables/data/seclist.save
 [ -e /etc/sptables/data/bogonlist.save ] && $IPSET restore -! -f /etc/sptables/data/bogonlist.save
