@@ -44,15 +44,16 @@ With manual installation, sptables can be used even without Systemd.
 
 * Clone from github and run installation script.
 
-
+```
 	$ git clone https://github.com/vkucukcakar/sptables.git	
 	$ cd sptables
 	$ ./install.sh
+```
 		
 * Give execute permission if not cloned from github
-
+```
 	$ chmod +x ./install.sh
-	
+```	
 * Edit configuration files at "/etc/sptables/conf/*". 
   
   Edit "/etc/sptables/conf/iptables.conf" and "/etc/sptables/conf/iptables.conf" according to your server configuration before starting or enabling sptables.
@@ -60,9 +61,9 @@ With manual installation, sptables can be used even without Systemd.
   
 	
 * Start the service (See usage below) and add your ssh IP address to allowlist to not lock yourself out of your server.
-  
+```  
 	$ ipset add allowlist 192.168.1.2
-
+```
 * Test and enable the service if everything works fine (See usage below)
 
 	
@@ -76,8 +77,8 @@ To manually install sptables, copy the files under files/* to /etc/sptables/*, g
 ## Uninstallation
 
 	# Stop and disable the service
-		$ systemctl stop sptables
-		$ systemctl disable sptables
+	$ systemctl stop sptables
+	$ systemctl disable sptables
 	
 	# You can try manually stopping if Systemd is not used
 	$ /etc/sptables/stop.sh
@@ -88,37 +89,37 @@ To manually install sptables, copy the files under files/* to /etc/sptables/*, g
 ## Usage
 
 * Start service
-
+```
 	$ systemctl start sptables
-
+```
 * Restart service
-
+```
 	$ systemctl restart sptables
-
+```
 * Reload service (Reload just restores IP sets and sysctl configuration. Use restart to apply new Iptables configuration)
-
+```
 	$ systemctl reload sptables
-
+```
 * Get service status
-
+```
 	$ systemctl status sptables
-	
+```	
 * Stop service
-
+```
 	$ systemctl stop sptables
-
+```
 * Enable service start on boot
-
+```
 	$ systemctl enable sptables
-
+```
 * Disable service start on boot
-
+```
 	$ systemctl disable sptables
-
+```
 * Manually save current sets without restarting service
-
+```
 	$ /etc/sptables/save.sh
- 
+``` 
 ## Details
 
 ### Configuration Files
