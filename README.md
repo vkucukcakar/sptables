@@ -76,15 +76,19 @@ To manually install sptables, copy the files under files/* to /etc/sptables/*, g
 
 ## Uninstallation
 
-	# Stop and disable the service
+* Stop and disable the service
+```
 	$ systemctl stop sptables
 	$ systemctl disable sptables
-	
-	# You can try manually stopping if Systemd is not used
+```	
+* You can try manually stopping if Systemd is not used
+```
 	$ /etc/sptables/stop.sh
-	
-	# Rename old sptables directory (You can delete all settings and IP sets later with "rm -r" if you wish)
+```	
+* Rename old sptables directory (You can delete all settings and IP sets later with "rm -r" if you wish)
+```
 	$ mv /etc/sptables /etc/sptables.backup
+```
 
 ## Usage
 
@@ -170,29 +174,38 @@ If you want to manually block an IP, use denylist. See ipset examples below.
 
 IP addresses can be added to and deleted from manulally working IP sets with ipset command.
 
-	# Add IP to allowlist with default timeout 
+* Add IP to allowlist with default timeout 
+```
 	$ ipset add allowlist 1.2.3.4
-
-	# Add IP to allowlist for 1 day, update timeout if IP already exists
+```
+* Add IP to allowlist for 1 day, update timeout if IP already exists
+```
 	$ ipset -exist add allowlist 1.2.3.4 timeout 86400
-	
-	# Add IP to allowlist permanently
+```	
+* Add IP to allowlist permanently
+```
 	$ ipset add allowlist 1.2.3.4 timeout 0
-	
-	# Remove IP from allowlist
+```	
+* Remove IP from allowlist
+```
 	$ ipset del allowlist 1.2.3.4
-
-	# Add IP to denylist with default timeout
+```
+* Add IP to denylist with default timeout
+```
 	$ ipset add denylist 1.2.3.4
-	
-	# Add IP to denylist for 1 day, update timeout if IP already exists
+```	
+* Add IP to denylist for 1 day, update timeout if IP already exists
+```
 	$ ipset -exist add denylist 1.2.3.4 timeout 86400
-	
-	# Add IP to denylist permanently
+```	
+* Add IP to denylist permanently
+```
 	$ ipset add denylist 1.2.3.4 timeout 0
-	
-	# Remove IP from denylist
+```	
+* Remove IP from denylist
+```
 	$ ipset del denylist 1.2.3.4
+```
 
 ### Allowing reverse proxies (Cloudflare etc...)
 
