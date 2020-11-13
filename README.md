@@ -26,7 +26,7 @@ Docker mode properties:
 * Iptables
 * IPset
 * Systemd
-* Root permissions
+* Root permission
 
 Tested on Debian Stretch (Requirements are already present)
 Installation file tested on Debian Stretch, Ubuntu 17, CentOS 7
