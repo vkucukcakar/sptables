@@ -64,35 +64,56 @@ SYSCTLD="/etc/sysctl.d"
 
 
 # Check if running with root permissions
-[ `id -u` -eq 0 ] || { echo "Error: This script must be run as root. Please run as root or try sudo."; exit 1; }
+[ `id -u` -eq 0 ] || { echo "Error: This script must be run as root. Please run as root or try \"sudo\"."; exit 1; }
 
 # Check if Docker installed
-docker --version >/dev/null 2>&1 || echo "Notice: Docker is not installed. No problem! sptables can run in both Docker and standalone mode.";
+docker --version >/dev/null 2>&1
+EXITCODE=$?
+if [[ $EXITCODE > 0 ]]; then
+	echo "Notice: Docker not installed. sptables will run in standalone mode.";
+else
+	echo "Notice: Docker is installed. sptables will run in Docker mode.";
+fi
 
 # Check if ipset available
-$IPSET --version >/dev/null 2>&1 || { echo "Error: IPset not available, please install IPset first."; exit 1; }
+$IPSET --version >/dev/null 2>&1 || { echo "Error: \"IPset\" not available, please install IPset to continue."; exit 1; }
 
 # Check if iptables available
-$IPTABLES --version >/dev/null 2>&1 || { echo "Error: Iptables not available, please install Iptables first."; exit 1; }
+$IPTABLES --version >/dev/null 2>&1 || { echo "Error: \"Iptables\" not available, please install Iptables to continue."; exit 1; }
 
 # Check if systemctl available
-$SYSTEMCTL --version >/dev/null 2>&1 || { echo "Error: Systemd not available, please install Systemd first or use manual installation described in README.md."; exit 1; }
+$SYSTEMCTL --version >/dev/null 2>&1 || { echo "Error: \"Systemd\" not available, please install Systemd to continue or use manual installation as described in README.md."; exit 1; }
 
 # Check if Systemd vendor path exists
-[ -d $USRSYSTEMD ] || { echo "Error: Systemd vendor path not found."; exit 1; }
+[ -d $USRSYSTEMD ] || { echo "Error: \"Systemd\" vendor path not found."; exit 1; }
 
 # Check if sysctl available
-$SYSCTL --version >/dev/null 2>&1 || { echo "Error: sysctl not available."; exit 1; }
+$SYSCTL --version >/dev/null 2>&1 || { echo "Error: \"sysctl\" not available."; exit 1; }
 
 # Check if sysctl.d path exists
-[ -d $SYSCTLD ] || { echo "Error: sysctl.d path not found."; exit 1; }
+[ -d $SYSCTLD ] || { echo "Error: \"sysctl.d\" path not found."; exit 1; }
+
+# Check if ip command is available
+ip -V >/dev/null 2>&1 || { echo "Error: \"ip\" command not available, please install the required packages or use manual installation described in README.md."; exit 1; }
+
+# Check if grep command is available
+grep --version >/dev/null 2>&1 || { echo "Error: \"grep\" command not available, please install the required packages or use manual installation described in README.md."; exit 1; }
+
+# Check if sed command is available
+sed --version >/dev/null 2>&1 || { echo "Error: \"sed\" command not available, please install the required packages or use manual installation described in README.md."; exit 1; }
 
 # Check if already installed
-[ -d /etc/sptables ] && { echo "Error: Already installed. Delete the old installation ( rm -r /etc/sptables ) to repair or install again."; exit 1; }
+[ -d /etc/sptables ] && { echo "Error: Already installed. Backup and delete the old installation ( mv /etc/sptables /etc/sptables.backup ) to repair or install again."; exit 1; }
 
 
 ### Start installation ###
 
+# Get default network interface name
+#IF_NAME=$(ip route | grep "^default\s" | sed -e "s/^.*dev\s//" -e "s/\s.*//")
+IF_NAME=$(ip route | grep "^default[[:blank:]]" | sed -e "s/^.*dev[[:blank:]]//" -e "s/[[:blank:]].*//")
+if [ ! "$IF_NAME" ]; then
+	echo -e "\e[31mWarning: Default network interface name could not be detected automatically. Please manually edit \"/etc/sptables/conf/iptables.conf\" and \"/etc/sptables/conf/iptables.docker.conf\" files and replace \"eth0\" with your default network interface name after installation.\e[0m";
+fi
 
 # Exit on errors
 set -e
@@ -104,6 +125,12 @@ set -x
 { echo -e "Copying files"; } 2> /dev/null;
 mkdir /etc/sptables
 cp -rf files/* /etc/sptables/
+
+# Replace "eth0" with the default network interface name in configuration files
+if [ "$IF_NAME" ]; then
+	sed 's/\([ 	"]\)eth0\([ 	"]\)/\1'"$IF_NAME"'\2/g' files/conf/iptables.conf > /etc/sptables/conf/iptables.conf
+	sed 's/\([ 	"]\)eth0\([ 	"]\)/\1'"$IF_NAME"'\2/g' files/conf/iptables.docker.conf > /etc/sptables/conf/iptables.docker.conf
+fi
 
 # Apply Sysctl hardening configuration
 { echo -e "Applying Sysctl hardening configuration"; } 2> /dev/null;

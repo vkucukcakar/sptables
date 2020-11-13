@@ -7,13 +7,13 @@ Actually, sptables consists of Iptables, Ipset, Sysctl configuration files and s
 
 Standalone mode properties:
 
-* Well commented pure Iptables rules
-* Simple structure with a few chains
+* Well-commented pure Iptables rules
+* Build a basic but powerful firewall
 * Pre-defined protection patterns and examples included
 * DoS/DDoS mitigation, connection limiting, port scanning protection, ping limitation, port knocking patterns implemented in pure Iptables
 * Iptables rules utilising IPset denylist with timeout
 * Bare Iptables with no daemons continuously running
-* A basic sysctl hardening configuration is included
+* A basic sysctl hardening configuration is also included
 
 Docker mode properties:
 
@@ -38,11 +38,13 @@ With manual installation, sptables can be used even without Systemd.
 
 ## Installation
 
+* Now, the installation script builds a basic but powerful firewall out of the box, but please read instructions before enabling the firewall.
+
 * Previous versions are not compatible with version 4. Please uninstall older version before installing version 4. (See the Uninstallation section below)
 
-* Installation also requires root permissions. (You can try sudo)
+* Installation requires root permission. (You can use sudo)
 
-* Clone from github and run installation script.
+* Clone from github and run the installation script.
 
 ```
 	$ git clone https://github.com/vkucukcakar/sptables.git	
@@ -50,26 +52,36 @@ With manual installation, sptables can be used even without Systemd.
 	$ ./install.sh
 ```
 		
-* Give execute permission if not cloned from github
-```
-	$ chmod +x ./install.sh
-```	
 * Edit configuration files at "/etc/sptables/conf/*". 
   
   Edit "/etc/sptables/conf/iptables.conf" and "/etc/sptables/conf/iptables.conf" according to your server configuration before starting or enabling sptables.
-  At least, change "eth0" with your network interface name!
   
-	
-* Start the service (See usage below) and add your ssh IP address to allowlist to not lock yourself out of your server.
+  The installation script will try to find out default network interface name and replace "eth0" with default network interface name in Iptables configuration files mentioned above.
+  
+  The default rules will allow any outgoing packets and disallow any incoming packets except for ports 22,80,443 (SSH, HTTP, HTTPS).
+    
+  There are various connection limits implemented for the ports allowed.
+  
+  Please see the well-commented iptables configuration files mentioned above.
+  
+* Start the service for testing. The service will not survive after reboot.
+
+  Note that, with default settings, the firewall will immediately lock you out if you are connected to ssh with a different port instead of port 22. Just reboot if something goes wrong.
+```
+	$ systemctl start sptables
+```
+* You can add your ssh IP address to allowlist to bypass rules and not lock yourself out of your own server in the fuuture.
 ```  
 	$ ipset add allowlist 192.168.1.2
 ```
-* Test and enable the service if everything works fine (See usage below)
-
+* Test the firewall for a while. After making sure everything is okay, you can permanently enable the service (See usage below)
+```
+	$ systemctl enable sptables
+```
 	
 ## Manual Installation
 
-If ./install.sh does not work for you, please check if requiremets are installed successfully and check command paths in ./install.sh.
+If ./install.sh does not work out of the box, please check if requiremets are installed successfully. You can optionally check command paths in ./install.sh.
 
 If you do not have Systemd and you want to use sptables without Systemd, you can try manual installation.
 To manually install sptables, copy the files under files/* to /etc/sptables/*, give /etc/sptables/*.sh execute permission, and call these scripts after editing configurations.

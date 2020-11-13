@@ -1,5 +1,10 @@
 # Changelog
 
+## v4.1.0
+
+- Improved installation script to build a basic but powerful firewall out of the box
+- Installation script will try to find out default network interface name and replace "eth0" with it, in Iptables configuration files.
+
 ## v4.0.0
 
 - Renamed the words in lists "whitelist", "blacklist" to "allowlist", "denylist" respectively
