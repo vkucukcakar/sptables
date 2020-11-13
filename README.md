@@ -66,7 +66,7 @@ With manual installation, sptables can be used even without Systemd.
   
 * Start the service for testing. The service will not survive after reboot.
 
-  Note that, with default settings, the firewall will immediately lock you out if you are connected to ssh with a different port instead of port 22. Just reboot if something goes wrong.
+  Note that, with default settings, the firewall will immediately lock you out if you are connected to ssh with a different port than 22. If something goes wrong, just reboot.
 ```
 	$ systemctl start sptables
 ```
